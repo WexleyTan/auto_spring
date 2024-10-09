@@ -20,7 +20,7 @@ pipeline {
 
         stage("deploy") {
             steps {
-                sh 'docker start springboot_jenkins || docker run --name springboot_jenkins -d -p 9090:8080 springboot_jenkins '
+                sh 'docker start springboot_jenkins || docker run --name springboot_jenkins-v1 -d -p 9090:8080 springboot_jenkins '
                 sh ' docker ps '
             }
         }
