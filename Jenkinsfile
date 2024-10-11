@@ -64,7 +64,7 @@ pipeline {
                     
                     dir("${env.MANIFEST_REPO}") {
                         sh """
-                            
+                            sed -i 's|image: ${env.IMAGE}:.*|image: ${env.DOCKER_IMAGE}|' ${env.MANIFEST_REPO}
                             sed -i 's+neathtan/springboot-cd.*+neathtan/springboot-cd:${BUILD_NUMBER}+g' deployment.yaml
                             echo ${DOCKER_IMAGE}
                         """
