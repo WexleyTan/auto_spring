@@ -64,7 +64,7 @@ pipeline {
                     
                     dir("${env.MANIFEST_REPO}") {
                         sh """
-                            sed -i 's|image: ${IMAGE}:.*|image: ${DOCKER_IMAGE}|' ${MANIFEST_FILE_PATH}
+                            sed -i 's|image: ${IMAGE}:.*|image: ${DOCKER_IMAGE}|' ${MANIFEST_FILE_REPO}
                             echo ${DOCKER_IMAGE}
                         """
                         
