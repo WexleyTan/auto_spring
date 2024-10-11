@@ -65,6 +65,7 @@ pipeline {
                     dir("${env.MANIFEST_REPO}") {
                         sh """
                             sed -i 's|image: ${IMAGE}:.*|image: ${DOCKER_IMAGE}|' ${MANIFEST_FILE_PATH}
+                            echo ${DOCKER_IMAGE}
                         """
                         
                         echo "Committing and pushing changes to the manifest repository..."
