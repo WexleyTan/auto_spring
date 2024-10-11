@@ -66,6 +66,7 @@ pipeline {
                         sh """
                             sed -i 's|image: ${IMAGE}:.*|image: ${DOCKER_IMAGE}|' ${MANIFEST_FILE_PATH}
                             sed -i 's+${IMAGE}.*+${IMAGE}:${BUILD_NUMBER}+g' deployment.yaml
+                            sed -i 's+neathtan/auto_springcd.*+neathtan/auto_springcd:${BUILD_NUMBER}+g' deployment.yaml
                             echo ${DOCKER_IMAGE}
                         """
                         
