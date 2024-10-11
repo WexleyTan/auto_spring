@@ -21,8 +21,6 @@ pipeline {
                 echo "Running on $NODE_NAME"
                 echo "Build Number: ${BUILD_NUMBER}"
                 sh 'docker image prune --all -f'
-                sh 'pwd'
-                sh 'ls'
             }
         }
 
@@ -67,8 +65,6 @@ pipeline {
                     dir("${env.MANIFEST_REPO}") {
                         sh """
                             sed -i 's|image: ${IMAGE}:.*|image: ${DOCKER_IMAGE}|' ${MANIFEST_FILE_PATH}
-                            echo "Updated deployment file:"
-                            cat ${MANIFEST_FILE_PATH}
                         """
                         
                         echo "Committing and pushing changes to the manifest repository..."
