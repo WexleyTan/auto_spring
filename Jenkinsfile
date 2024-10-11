@@ -6,7 +6,7 @@ pipeline {
         nodejs 'nodejs'
     }
     environment {
-        IMAGE = "neathtan/auto_springcd"
+        IMAGE = "neathtan/springboot-cd"
         DOCKER_IMAGE = "${IMAGE}:${BUILD_NUMBER}"
         DOCKER_CREDENTIALS_ID = "dockertoken"
         GIT_MANIFEST_REPO = "https://github.com/WexleyTan/auto_spring_manifest.git"
@@ -65,7 +65,6 @@ pipeline {
                     dir("${env.MANIFEST_REPO}") {
                         sh """
                             sed -i 's|image: ${IMAGE}:.*|image: ${DOCKER_IMAGE}|' ${MANIFEST_FILE_PATH}
-                            sed -i 's+neathtan/auto_springcd.*+neathtan/auto_springcd:${BUILD_NUMBER}+g' deployment.yaml
                             sed -i 's+neathtan/springboot-cd.*+neathtan/springboot-cd:${BUILD_NUMBER}+g' deployment.yaml
                             echo ${DOCKER_IMAGE}
                         """
