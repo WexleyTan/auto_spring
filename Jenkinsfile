@@ -66,19 +66,19 @@ pipeline {
                     
                     dir("${env.MANIFEST_REPO}") {
                         sh """
-                            pwd
-                            sed -i 's|image: ${env.IMAGE}:.*|image: ${env.DOCKER_IMAGE}|' ${env.MANIFEST_FILE_PATH}
+                            sed -i 's|image: ${IMAGE}:.*|image: ${DOCKER_IMAGE}|' ${MANIFEST_FILE_PATH}
                             echo "Updated deployment file:"
+                            cat ${MANIFEST_FILE_PATH}
                         """
                         
                         echo "Committing and pushing changes to the manifest repository..."
-                        withCredentials([usernamePassword(credentialsId: env.GIT_CREDENTIALS_ID, passwordVariable: 'GIT_PASS', usernameVariable: 'GIT_USER')]) {
+                        withCredentials([usernamePassword(credentialsId: GIT_CREDENTIALS_ID, passwordVariable: 'GIT_PASS', usernameVariable: 'GIT_USER')]) {
                             sh """
                                 git config --global user.name "WexleyTan"
                                 git config --global user.email "neathtan1402@gmail.com"
-                                git add ${env.MANIFEST_FILE_PATH}
-                                git commit -m "Update image to ${env.DOCKER_IMAGE}"
-                                git push https://${GIT_USER}:${GIT_PASS}@github.com/WexleyTan/auto_spring_manifest.git ${env.GIT_BRANCH}
+                                git add ${MANIFEST_FILE_PATH}
+                                git commit -m "Update image to ${DOCKER_IMAGE}"
+                                git push https://${GIT_USER}:${GIT_PASS}@github.com/WexleyTan/auto_spring_manifest.git ${GIT_BRANCH}
                             """
                         }
                     }
@@ -87,3 +87,4 @@ pipeline {
         }
     }
 }
+
