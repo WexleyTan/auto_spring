@@ -32,7 +32,7 @@ pipeline {
         stage("build and push docker image") {
             steps {
                 script {
-                    echo "🚀Building docker image..."
+                    echo "Building docker image..."
                     sh ' docker build -t ${DOCKER_IMAGE} .'
                     sh ' docker images | grep -i ${IMAGE} '
                     
