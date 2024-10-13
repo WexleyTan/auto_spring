@@ -86,7 +86,7 @@ pipeline {
                                 git config --global user.email "neathtan1402@gmail.com"
                                 git add ${MANIFEST_FILE_PATH}
                                 git commit -m "Update image to ${DOCKER_IMAGE}"
-                                git push https://${GIT_USER}:${GIT_PASS}@github.com/WexleyTan/auto_spring_manifest.git ${GIT_BRANCH}
+                                git push https://${GIT_USER}:${GIT_PASS}@github.com/WexleyTan/auto_spring_manifest ${GIT_BRANCH}
                             """
                         }
                     }
