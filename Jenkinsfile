@@ -26,13 +26,13 @@ pipeline {
             steps {
                 script {
                     echo "Building Docker image..."
-                    sh "docker build -t ${env.DOCKER_IMAGE} ."
+                    sh "docker build -t ${DOCKER_IMAGE} ."
                     sh "docker images | grep -i ${env.IMAGE}"
                     
                     echo "Pushing the image to Docker Hub"
                     withCredentials([usernamePassword(credentialsId: "${env.DOCKER_CREDENTIALS_ID}", usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
                         sh 'echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin'
-                        sh "docker push ${env.DOCKER_IMAGE}"
+                        sh "docker push ${DOCKER_IMAGE}"
                     }
                 }
             }
