@@ -1,9 +1,14 @@
-FROM eclipse-temurin:22.0.1_8-jre-ubi9-minimal
-# Copy the executable JAR file from build stage to /app directory in container and rename it to app.jar
-COPY --from=build /app/target/*.jar /app/app.jar
+# Stage 2: Run the application
+FROM eclipse-temurin:17-jre-alpine
 
-# Expose the port on which your Spring application will run (change as per your application)
+# Set the working directory inside the container
+WORKDIR /app
+
+# Copy the JAR file from the build stage
+COPY target/*.jar app.jar
+
+# Expose the port that the application will run on
 EXPOSE 9090
 
-# Set the command to run your Spring application when the container starts
-CMD ["java", "-jar", "/app/app.jar"]
+# Run the application
+ENTRYPOINT ["java", "-jar", "app.jar"]
