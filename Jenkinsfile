@@ -11,7 +11,7 @@ pipeline {
         GIT_BRANCH = "master"
         MANIFEST_REPO = "auto_spring_manifest"
         MANIFEST_FILE_PATH = "deployment.yaml"
-        GIT_CREDENTIALS_ID = 'git_new'
+        GIT_CREDENTIALS_ID = 'git_pass'
     }
     stages {
         stage("Checkout") {
