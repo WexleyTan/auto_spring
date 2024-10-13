@@ -4,7 +4,7 @@ pipeline {
         maven 'maven'
     }
     environment {
-        IMAGE = "neathtan/spring_adv"
+        IMAGE = "neathtan/spring_ad"
         DOCKER_IMAGE = "${IMAGE}:${BUILD_NUMBER}"
         DOCKER_CREDENTIALS_ID = "dockertoken"
         GIT_MANIFEST_REPO = "https://github.com/WexleyTan/auto_spring_manifest.git"
