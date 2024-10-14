@@ -1,96 +1,56 @@
 pipeline {
-    agent any
+    agent any 
     tools {
-        maven 'maven'
+        gradle 'Gradle 7.5.1'  // Specify the version of Gradle to use
     }
     environment {
-        IMAGE = "neathtan/spring_adv"
+        IMAGE = "gradle_unzip"
+        FILE_NAME = "gradle.zip"  // Corrected the filename from 'grandle.zip' to 'gradle.zip'
+        DIR_UNZIP = "demo" 
         DOCKER_IMAGE = "${IMAGE}:${BUILD_NUMBER}"
+        DOCKER_CONTAINER = "springbootG_jenkins"
         DOCKER_CREDENTIALS_ID = "dockertoken"
-        GIT_MANIFEST_REPO = "https://github.com/WexleyTan/auto_spring_manifest.git"
-        GIT_BRANCH = "master"
-        MANIFEST_REPO = "auto_spring_manifest"
-        MANIFEST_FILE_PATH = "deployment.yaml"
-        GIT_CREDENTIALS_ID = 'git_pass'
     }
+
     stages {
-        stage("Checkout") {
+        stage("Check Versions") {
             steps {
                 script {
-                    echo "Running on $NODE_NAME"
-                    echo "Build Number: ${BUILD_NUMBER}"
-                    sh 'docker image prune --all -f'
+                    echo "Gradle version:"
+                    sh 'gradle --version'  // Display the Gradle version
+                    echo "Java version:"
+                    sh 'java --version'  // Display the Java version
                 }
             }
         }
 
-        stage("Clean Package") {
+        stage('Unzip File') {
             steps {
                 script {
-                    echo "Building the application..."
-                    sh 'mvn clean install'
-                }
-            }
-        }
-
-        stage("Build and Push Docker Image") {
-            steps {
-                script {
-                    echo "Building Docker image..."
-                    sh "docker build -t ${DOCKER_IMAGE} ."
-                    sh "docker images | grep -i ${IMAGE}"
-
-                    echo "Logging in to Docker Hub using Jenkins credentials..."
-                    withCredentials([usernamePassword(credentialsId: DOCKER_CREDENTIALS_ID, passwordVariable: 'DOCKER_PASS', usernameVariable: 'DOCKER_USER')]) {
-                        sh 'echo "${DOCKER_PASS} ${DOCKER_USER}"'
-                        sh "echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin"
-                    }
-                    
-                    echo "Pushing the image to Docker Hub..."
-                    sh "docker push ${DOCKER_IMAGE}"
-                }
-            }
-        }
-
-        stage("Cloning the Manifest File") {
-            steps {
-                script {
-                    echo "Checking if the manifest repository exists and removing it if necessary..."
+                    echo "Checking if the file ${FILE_NAME} exists and unzipping it if present..."
                     sh """
-                        if [ -d "${env.MANIFEST_REPO}" ]; then
-                            echo "Directory ${env.MANIFEST_REPO} exists, removing it..."
-                            rm -rf ${env.MANIFEST_REPO}
+                        if [ -f '${FILE_NAME}' ]; then
+                            echo "Removing existing directory ${DIR_UNZIP}..."
+                            rm -rf ${DIR_UNZIP}  
+                            echo "Unzipping the file..."
+                            unzip -o '${FILE_NAME}' -d ${DIR_UNZIP}/  
+                        else
+                            echo "'${FILE_NAME}' does not exist."
+                            exit 1 
                         fi
                     """
-                    
-                    echo "Cloning the manifest repository..."
-                    sh "git clone -b ${GIT_BRANCH} ${GIT_MANIFEST_REPO} ${MANIFEST_REPO}"
                 }
             }
         }
 
-        stage("Updating the Manifest File") {
+        stage("Build Docker Image") {
             steps {
                 script {
-                    echo "Updating the image in the deployment manifest..."
-                    dir("${env.MANIFEST_REPO}") {
-                        sh """
-                            sed -i 's|image: ${env.IMAGE}:.*|image: ${env.DOCKER_IMAGE}|' ${env.MANIFEST_FILE_PATH}
-                            echo "Updated deployment file:"
-                            cat ${env.MANIFEST_FILE_PATH}
-                        """
-                        
-                        echo "Committing and pushing changes to the manifest repository..."
-                        withCredentials([usernamePassword(credentialsId: GIT_CREDENTIALS_ID, passwordVariable: 'GIT_PASS', usernameVariable: 'GIT_USER')]) {
-                            sh """
-                                git config --global user.name "WexleyTan"
-                                git config --global user.email "neathtan1402@gmail.com"
-                                git add ${MANIFEST_FILE_PATH}
-                                git commit -m "Update image to ${DOCKER_IMAGE}"
-                                git push https://${GIT_USER}:${GIT_PASS}@github.com/WexleyTan/auto_spring_manifest.git ${GIT_BRANCH}
-                            """
-                        }
+                    echo "Building the Gradle project..."
+                    dir("${DIR_UNZIP}") {  // Use the correct variable name
+                        sh "docker build -t ${DOCKER_IMAGE} ."  
                     }
+                    sh "docker images | grep -i ${IMAGE}" 
                 }
             }
         }
